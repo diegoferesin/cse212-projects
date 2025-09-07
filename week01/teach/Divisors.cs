@@ -1,7 +1,5 @@
-public static class Divisors {
-    /// <summary>
-    /// Entry point for the Divisors class
-    /// </summary>
+public static class Divisors 
+{
     public static void Run() {
         List<int> list = FindDivisors(80);
         Console.WriteLine("<List>{" + string.Join(", ", list) + "}"); // <List>{1, 2, 4, 5, 8, 10, 16, 20, 40}
@@ -18,7 +16,15 @@ public static class Divisors {
     /// <returns>List of divisors</returns>
     private static List<int> FindDivisors(int number) {
         List<int> results = new();
-        // TODO problem 1
+        
+        // Check all numbers from 1 to number-1
+        for (int i = 1; i < number; i++) {
+            // If number is divisible by i, add i to the results
+            if (number % i == 0) {
+                results.Add(i);
+            }
+        }
+        
         return results;
     }
 }

@@ -11,6 +11,30 @@ public static class ArraySelector
 
     private static int[] ListSelector(int[] list1, int[] list2, int[] select)
     {
-        return [];
+        // Create result array with same length as selector array
+        int[] result = new int[select.Length];
+        
+        // Track current indices for both input arrays
+        int index1 = 0; // Current position in list1
+        int index2 = 0; // Current position in list2
+        
+        // Loop through selector array
+        for (int i = 0; i < select.Length; i++)
+        {
+            if (select[i] == 1)
+            {
+                // Take next element from list1
+                result[i] = list1[index1];
+                index1++;
+            }
+            else if (select[i] == 2)
+            {
+                // Take next element from list2
+                result[i] = list2[index2];
+                index2++;
+            }
+        }
+        
+        return result;
     }
 }
