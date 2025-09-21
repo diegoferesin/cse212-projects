@@ -21,8 +21,37 @@ public static class SetsAndMaps
     /// <param name="words">An array of 2-character words (lowercase, no duplicates)</param>
     public static string[] FindPairs(string[] words)
     {
-        // TODO Problem 1 - ADD YOUR CODE HERE
-        return [];
+        // Use a set to store words we've seen for O(1) lookup
+        var seenWords = new HashSet<string>();
+        var pairs = new List<string>();
+        
+        foreach (string word in words)
+        {
+            // Skip words where both characters are the same (special case)
+            if (word[0] == word[1])
+            {
+                continue;
+            }
+            
+            // Create the reverse of the current word more efficiently
+            string reversed = word[1].ToString() + word[0].ToString();
+            
+            // Check if we've seen the reverse of this word
+            if (seenWords.Contains(reversed))
+            {
+                // Found a symmetric pair! Add it to results
+                pairs.Add(reversed + " & " + word);
+                // Remove the reverse from seen words since it's now paired
+                seenWords.Remove(reversed);
+            }
+            else
+            {
+                // Haven't seen the reverse yet, add current word to set
+                seenWords.Add(word);
+            }
+        }
+        
+        return pairs.ToArray();
     }
 
     /// <summary>
@@ -42,7 +71,21 @@ public static class SetsAndMaps
         foreach (var line in File.ReadLines(filename))
         {
             var fields = line.Split(",");
-            // TODO Problem 2 - ADD YOUR CODE HERE
+            // The degree information is in the 4th column (index 3 in 0-based indexing)
+            if (fields.Length > 3)
+            {
+                string degree = fields[3].Trim();
+                
+                // Increment the count for this degree
+                if (degrees.ContainsKey(degree))
+                {
+                    degrees[degree]++;
+                }
+                else
+                {
+                    degrees[degree] = 1;
+                }
+            }
         }
 
         return degrees;
@@ -66,8 +109,66 @@ public static class SetsAndMaps
     /// </summary>
     public static bool IsAnagram(string word1, string word2)
     {
-        // TODO Problem 3 - ADD YOUR CODE HERE
-        return false;
+        // Normalize both words: remove spaces and convert to lowercase
+        string normalized1 = word1.Replace(" ", "").ToLower();
+        string normalized2 = word2.Replace(" ", "").ToLower();
+        
+        // If lengths are different after normalization, they can't be anagrams
+        if (normalized1.Length != normalized2.Length)
+        {
+            return false;
+        }
+        
+        // Count letter frequencies in both words using dictionaries
+        var letterCount1 = new Dictionary<char, int>();
+        var letterCount2 = new Dictionary<char, int>();
+        
+        // Count letters in first word
+        foreach (char c in normalized1)
+        {
+            if (letterCount1.ContainsKey(c))
+            {
+                letterCount1[c]++;
+            }
+            else
+            {
+                letterCount1[c] = 1;
+            }
+        }
+        
+        // Count letters in second word
+        foreach (char c in normalized2)
+        {
+            if (letterCount2.ContainsKey(c))
+            {
+                letterCount2[c]++;
+            }
+            else
+            {
+                letterCount2[c] = 1;
+            }
+        }
+        
+        // Compare the letter counts
+        // First check if they have the same number of unique letters
+        if (letterCount1.Count != letterCount2.Count)
+        {
+            return false;
+        }
+        
+        // Check if each letter appears the same number of times in both words
+        foreach (var kvp in letterCount1)
+        {
+            char letter = kvp.Key;
+            int count = kvp.Value;
+            
+            if (!letterCount2.ContainsKey(letter) || letterCount2[letter] != count)
+            {
+                return false;
+            }
+        }
+        
+        return true;
     }
 
     /// <summary>
@@ -101,6 +202,27 @@ public static class SetsAndMaps
         // on those classes so that the call to Deserialize above works properly.
         // 2. Add code below to create a string out each place a earthquake has happened today and its magitude.
         // 3. Return an array of these string descriptions.
-        return [];
+        
+        if (featureCollection?.Features == null)
+        {
+            return new string[0];
+        }
+        
+        var earthquakeSummaries = new List<string>();
+        
+        foreach (var feature in featureCollection.Features)
+        {
+            if (feature?.Properties != null)
+            {
+                string place = feature.Properties.Place ?? "Unknown location";
+                double magnitude = feature.Properties.Mag ?? 0.0;
+                
+                // Format the string as: "place - Mag magnitude"
+                string summary = $"{place} - Mag {magnitude:F2}";
+                earthquakeSummaries.Add(summary);
+            }
+        }
+        
+        return earthquakeSummaries.ToArray();
     }
 }
